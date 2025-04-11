@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../defensive-eye/.idea/defensive-eye.iml" filepath="$PROJECT_DIR$/../defensive-eye/.idea/defensive-eye.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/digitallive.iml" filepath="$PROJECT_DIR$/.idea/digitallive.iml" />
     </modules>
   </component>

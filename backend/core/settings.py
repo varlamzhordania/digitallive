@@ -28,6 +28,7 @@ ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS', default=['*'])
 LOCAL_APPS = [
     'account.apps.AccountConfig',
     'main.apps.MainConfig',
+    'websocket.apps.WebsocketConfig'
 ]
 
 THIRD_PARTY_APPS = [
@@ -40,6 +41,8 @@ THIRD_PARTY_APPS = [
 ]
 
 INSTALLED_APPS = [
+    # 'channels',
+    "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -144,7 +147,6 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-
 STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
@@ -187,6 +189,17 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 25,
 
+}
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [(env('REDIS_HOST', default='localhost'))],
+            "capacity": 1000,  # 🔹 Increase buffer size to allow more messages
+            "expiry": 10,  # 🔹 Reduce expiry to clear old messages faster
+        },
+    },
 }
 
 # Stripe
