@@ -2,6 +2,31 @@ import time
 import subprocess
 
 from celery import shared_task
+from moviepy import VideoFileClip
+
+
+@shared_task
+def update_video_duration(display_id):
+    try:
+        from .models import Display
+        display = Display.objects.get(id=display_id)
+
+        if display.current_video:
+            video_path = display.current_video.path
+
+            video = VideoFileClip(video_path)
+            duration = video.duration
+
+            display.video_duration = duration
+            display.save(update_fields=['video_duration'])
+
+            return f"Video duration updated to {duration} seconds."
+        else:
+            return "No video file assigned to the display."
+    except Display.DoesNotExist:
+        return f"Display with ID {display_id} does not exist."
+    except Exception as e:
+        return f"An error occurred: {str(e)}"
 
 
 @shared_task

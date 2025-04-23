@@ -1,7 +1,5 @@
 import uuid
-import subprocess
 
-from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
@@ -9,7 +7,7 @@ from django.core.validators import FileExtensionValidator
 from autoslug.fields import AutoSlugField
 
 from core.models import BaseModel, UploadPath
-from main.tasks import start_streaming
+from main.tasks import start_streaming, update_video_duration
 
 
 class Place(BaseModel):
@@ -82,7 +80,6 @@ class Display(BaseModel):
             FileExtensionValidator(
                 allowed_extensions=['mp4', ]
             )
-            # add more
         ],
         blank=True,
         null=True,
@@ -90,16 +87,17 @@ class Display(BaseModel):
     )
     video_duration = models.FloatField(
         verbose_name=_('Video Duration (seconds)'),
+        default=0,
         blank=True,
         null=True,
         help_text=_(
             'Duration of the video in seconds (for easier tracking).'
         )
     )
-    loop = models.BooleanField(
-        verbose_name=_('Loop'),
-        default=True,
-        help_text=_('If true, loop the current video.'),
+    loop = models.IntegerField(
+        verbose_name=_('Number of times to play'),
+        default=0,
+        help_text=_('-1 means unlimited and 0 mean only the first time'),
     )
     paused = models.BooleanField(
         verbose_name=_('Paused'),
@@ -117,52 +115,24 @@ class Display(BaseModel):
         return self.name
 
     def save(self, *args, **kwargs):
+        is_video_uploaded = self.pk is None and self.current_video
+        is_video_changed = self.pk and self.current_video != Display.objects.get(
+            pk=self.pk
+        ).current_video  # Video update
+
         super().save(*args, **kwargs)
 
-    def set_video_duration(self, save=False):
-        if self.current_video and not self.video_duration:
-            try:
-                video_path = self.current_video.path
-                ffmpeg_command = [
-                    'ffmpeg', '-i', video_path, '-f',
-                    'ffmetadata', '-'
-                ]
-                result = subprocess.run(
-                    ffmpeg_command,
-                    capture_output=True,
-                    text=True,
-                    check=True
-                )
+        if is_video_uploaded or is_video_changed:
+            self.set_video_duration()
 
-                for line in result.stderr.splitlines():
-                    if "Duration" in line:
-                        # Example output: Duration: 00:01:23.45, start: 0.000000, bitrate: 315 kb/s
-                        duration_str = \
-                            line.split(',')[0].split(':')[
-                                1].strip()
-                        minutes, seconds = duration_str.split(
-                            ':'
-                        )
-                        total_seconds = int(
-                            minutes
-                        ) * 60 + float(seconds)
-                        self.video_duration = total_seconds
-                        if save:
-                            self.save(
-                                update_fields=[
-                                    'video_duration']
-                            )
-                        break
-            except subprocess.CalledProcessError as e:
-                raise ValidationError(
-                    f"Error extracting video duration: {e}"
-                )
+    def set_video_duration(self, video_duration=None):
+        if video_duration is None:
+            update_video_duration.apply_async(args=[self.id])
+        else:
+            self.video_duration = video_duration
+            self.save(update_fields=['video_duration'])
 
     def start_streaming(self):
-        """
-        Starts streaming the current video to the corresponding stream key.
-        This function can use FFmpeg and handle the `paused` and `loop` settings.
-        """
         if self.paused:
             self.paused = False
             self.save(update_fields=['paused'])
