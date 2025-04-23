@@ -4,6 +4,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.core.validators import FileExtensionValidator
+from django.utils import timezone
 from autoslug.fields import AutoSlugField
 
 from core.models import BaseModel, UploadPath
@@ -147,3 +148,63 @@ class Display(BaseModel):
         self.paused = True
         self.save(update_fields=['paused'])
         return True
+
+
+class Ticker(BaseModel):
+    display = models.ForeignKey(
+        Display,
+        on_delete=models.CASCADE,
+        related_name='tickers',
+        verbose_name=_('Display'),
+    )
+    interval = models.FloatField(
+        verbose_name=_('Interval(seconds)'),
+        default=60,
+        help_text=_('Interval of showing tickets in seconds.'),
+    )
+    start_time = models.DateTimeField(
+        verbose_name=_('Start Time'),
+        null=True,
+        blank=True,
+        help_text=_('When to start showing this ticker (optional).')
+    )
+    end_time = models.DateTimeField(
+        verbose_name=_('End Time'),
+        null=True,
+        blank=True,
+        help_text=_('When to stop showing this ticker (optional).')
+    )
+
+    class Meta:
+        verbose_name = _('Ticker')
+        verbose_name_plural = _('Tickers')
+        ordering = ('-created_at',)
+
+    def __str__(self):
+        return f"Ticker ID: {self.id}"
+
+
+class TickerItem(BaseModel):
+    ticker = models.ForeignKey(
+        Ticker,
+        related_name='items',
+        on_delete=models.CASCADE,
+        verbose_name=_('Ticker')
+    )
+    content = models.TextField(
+        verbose_name=_('Content'),
+        help_text=_('Individual text message for the ticker.')
+    )
+    order = models.PositiveIntegerField(
+        default=0,
+        verbose_name=_('Order'),
+        help_text=_('Order in which this text will appear in the ticker feed.')
+    )
+
+    class Meta:
+        verbose_name = _('Ticker Item')
+        verbose_name_plural = _('Ticker Items')
+        ordering = ('order',)
+
+    def __str__(self):
+        return self.content

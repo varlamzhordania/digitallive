@@ -35,14 +35,21 @@ class DisplayConsumer(AsyncWebsocketConsumer):
         await self.close()
 
     async def send_display_data(self):
-        from .serializers import DisplaySerializer
         self.display = await self.get_display(self.key)
-        serializer = DisplaySerializer(self.display)
+
+        serializer_data = await sync_to_async(self.get_display_serializer_data)(self.display)
+
         data = {
             "action": "get_display_data",
-            "message": serializer.data
+            "message": serializer_data
         }
+
         await self.send(text_data=json.dumps(data))
+
+    def get_display_serializer_data(self, display):
+        from .serializers import DisplaySerializer
+        serializer = DisplaySerializer(display)
+        return serializer.data
 
     async def display_update(self, event):
         data = event["data"]

@@ -1,5 +1,18 @@
 from django.contrib import admin
-from .models import Place, Display
+from nested_admin import NestedModelAdmin, NestedStackedInline
+
+from .models import Place, Display, Ticker, TickerItem
+
+
+class TicketItemInline(NestedStackedInline):
+    model = TickerItem
+    extra = 0
+
+
+class TicketNestedInline(NestedStackedInline):
+    model = Ticker
+    extra = 0
+    inlines = [TicketItemInline]
 
 
 @admin.register(Place)
@@ -11,7 +24,7 @@ class PlaceAdmin(admin.ModelAdmin):
 
 
 @admin.register(Display)
-class DisplayAdmin(admin.ModelAdmin):
+class DisplayAdmin(NestedModelAdmin, admin.ModelAdmin):
     list_display = ['id', 'name', 'place', 'current_video',
                     'video_duration', 'loop', 'paused',
                     'is_active', 'updated_at', 'created_at']
@@ -21,6 +34,7 @@ class DisplayAdmin(admin.ModelAdmin):
     readonly_fields = ['task_id', 'stream_key', 'created_at', 'updated_at']
 
     search_fields = ['name', 'place__name']
+    inlines = [TicketNestedInline]
 
     actions = ['set_video_duration_action', 'start_streaming_action', 'stop_streaming_action']
 
