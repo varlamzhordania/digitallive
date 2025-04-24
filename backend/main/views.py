@@ -1,18 +1,21 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.request import Request
-from rest_framework import permissions, status
+from rest_framework import status
 
 from .models import Display
 from .serializers import DisplayLogSerializer
+from .authentication import DisplayTokenAuthentication
+from .permissions import IsDisplayAuthenticated
 
 
 class DisplayLogView(APIView):
-    permission_classes = [permissions.AllowAny]
+    authentication_classes = [DisplayTokenAuthentication]
+    permission_classes = [IsDisplayAuthenticated]
 
-    def post(self, request: Request, code: str, format=None) -> Response:
+    def post(self, request: Request, format=None) -> Response:
         try:
-            display = Display.objects.get(stream_key=code)
+            display = request.user
             data = request.data.copy()
             data['display'] = display.id
 

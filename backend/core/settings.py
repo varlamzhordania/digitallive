@@ -169,7 +169,8 @@ REST_FRAMEWORK = {
     # Authentication Settings
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
+        'main.authentication.DisplayTokenAuthentication',
+        # 'rest_framework.authentication.TokenAuthentication',
     ],
 
     'DEFAULT_PERMISSION_CLASSES': [
@@ -178,12 +179,12 @@ REST_FRAMEWORK = {
     ],
 
     'DEFAULT_THROTTLE_CLASSES': [
-        'rest_framework.throttling.AnonRateThrottle',  # Rate limiting for anonymous users
-        'rest_framework.throttling.UserRateThrottle',  # Rate limiting for authenticated users
+        # 'rest_framework.throttling.AnonRateThrottle',  # Rate limiting for anonymous users
+        # 'rest_framework.throttling.UserRateThrottle',  # Rate limiting for authenticated users
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '100/day',  # Limit anonymous users to 100 requests per day
-        'user': '1000/day',  # Limit authenticated users to 1000 requests per day
+        # 'anon': '100/day',  # Limit anonymous users to 100 requests per day
+        # 'user': '1000/day',  # Limit authenticated users to 1000 requests per day
     },
 
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',

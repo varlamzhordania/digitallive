@@ -1,7 +1,7 @@
 from django.contrib import admin
 from nested_admin import NestedModelAdmin, NestedStackedInline
 
-from .models import Place, Display, DisplayLog, Ticker, TickerItem
+from .models import Place, Display, DisplayLog, DisplayToken, Ticker, TickerItem
 
 
 class TicketItemInline(NestedStackedInline):
@@ -106,3 +106,11 @@ class DisplayLogAdmin(admin.ModelAdmin):
     list_filter = ["type", "created_at", "updated_at"]
 
     search_fields = ["display__name", "display__stream_key", "display__id"]
+
+
+@admin.register(DisplayToken)
+class DisplayTokenAdmin(admin.ModelAdmin):
+    list_display = ['key', 'display', 'created']
+    fields = ['display']
+    search_fields = ['key', 'display__name']
+    ordering = ('-created',)

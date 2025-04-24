@@ -4,6 +4,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.core.validators import FileExtensionValidator
+from rest_framework.authtoken.models import Token
 from autoslug.fields import AutoSlugField
 
 from core.models import BaseModel, UploadPath
@@ -187,17 +188,26 @@ class DisplayLog(BaseModel):
         return f'{self.display.name} - {self.type} - {self.created_at}'
 
 
+class DisplayToken(Token):
+    display = models.ForeignKey(Display, on_delete=models.CASCADE, related_name='tokens')
+    user = None
+
+    class Meta:
+        verbose_name = _('Display Token')
+        verbose_name_plural = _('Display Tokens')
+        ordering = ['-created']
+
+    def __str__(self):
+        return f"Token for {self.display.name}"
+
+
+
 class Ticker(BaseModel):
     display = models.ForeignKey(
         Display,
         on_delete=models.CASCADE,
         related_name='tickers',
         verbose_name=_('Display'),
-    )
-    interval = models.FloatField(
-        verbose_name=_('Interval(seconds)'),
-        default=60,
-        help_text=_('Interval of showing tickets in seconds.'),
     )
     start_time = models.DateTimeField(
         verbose_name=_('Start Time'),

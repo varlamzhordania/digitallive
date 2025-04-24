@@ -15,7 +15,7 @@ class TickerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticker
-        fields = ['id', 'interval', 'start_time', 'end_time', 'items']
+        fields = ['id', 'start_time', 'end_time', 'items']
 
 
 class DisplaySerializer(serializers.ModelSerializer):
