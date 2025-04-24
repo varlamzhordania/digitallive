@@ -4,7 +4,6 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.core.validators import FileExtensionValidator
-from django.utils import timezone
 from autoslug.fields import AutoSlugField
 
 from core.models import BaseModel, UploadPath
@@ -148,6 +147,44 @@ class Display(BaseModel):
         self.paused = True
         self.save(update_fields=['paused'])
         return True
+
+
+class DisplayLog(BaseModel):
+    class TypeChoices(models.TextChoices):
+        ERROR = 'ERROR', _('Error')
+        WARNING = 'WARNING', _('Warning')
+        INFO = 'INFO', _('Info')
+        DEBUG = 'DEBUG', _('Debug')
+        UNKNOWN = 'UNKNOWN', _('Unknown')
+
+    display = models.ForeignKey(
+        Display,
+        verbose_name=_('Display'),
+        on_delete=models.CASCADE,
+        related_name='logs',
+        blank=True,
+        null=True,
+    )
+    type = models.CharField(
+        verbose_name=_('Log Type'),
+        max_length=10,
+        choices=TypeChoices.choices,
+        default=TypeChoices.UNKNOWN,
+        help_text=_('Type of the log')
+    )
+    message = models.TextField(
+        verbose_name=_('Message'),
+        help_text=_('The log message')
+    )
+    is_active = None
+
+    class Meta:
+        verbose_name = _('Display Log')
+        verbose_name_plural = _('Display Logs')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.display.name} - {self.type} - {self.created_at}'
 
 
 class Ticker(BaseModel):

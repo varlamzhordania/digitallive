@@ -1,7 +1,7 @@
 from django.contrib import admin
 from nested_admin import NestedModelAdmin, NestedStackedInline
 
-from .models import Place, Display, Ticker, TickerItem
+from .models import Place, Display, DisplayLog, Ticker, TickerItem
 
 
 class TicketItemInline(NestedStackedInline):
@@ -98,3 +98,11 @@ class DisplayAdmin(NestedModelAdmin, admin.ModelAdmin):
     set_video_duration_action.short_description = "Set Video Duration for selected displays."
     stop_streaming_action.short_description = "Stop streaming for selected displays"
     start_streaming_action.short_description = "Start streaming for selected displays"
+
+
+@admin.register(DisplayLog)
+class DisplayLogAdmin(admin.ModelAdmin):
+    list_display = ["id", "display", "type", "created_at", "updated_at"]
+    list_filter = ["type", "created_at", "updated_at"]
+
+    search_fields = ["display__name", "display__stream_key", "display__id"]

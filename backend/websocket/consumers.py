@@ -5,8 +5,6 @@ from asgiref.sync import sync_to_async
 
 from main.models import Display
 
-from .serializers import DisplaySerializer
-
 
 class DisplayConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -30,20 +28,20 @@ class DisplayConsumer(AsyncWebsocketConsumer):
         else:
             await self.send(text_data=json.dumps({"error": "Unknown action"}))
 
-    async def disconnect(self):
-        await self.channel_layer.group_discard(f"display_{self.display.code}", self.channel_name)
+    async def disconnect(self, close_code, **kwargs):
+        await self.channel_layer.group_discard(
+            f"display_{self.display.stream_key}",
+            self.channel_name
+        )
         await self.close()
 
     async def send_display_data(self):
         self.display = await self.get_display(self.key)
-
         serializer_data = await sync_to_async(self.get_display_serializer_data)(self.display)
-
         data = {
             "action": "get_display_data",
             "message": serializer_data
         }
-
         await self.send(text_data=json.dumps(data))
 
     def get_display_serializer_data(self, display):
@@ -53,12 +51,10 @@ class DisplayConsumer(AsyncWebsocketConsumer):
 
     async def display_update(self, event):
         data = event["data"]
-
         prep_data = {
             "action": "display_update",
             "message": data
         }
-
         await self.send(text_data=json.dumps(prep_data))
 
     @sync_to_async

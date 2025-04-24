@@ -19,7 +19,6 @@
     </content>
     <orderEntry type="jdk" jdkName="Python 3.12 (digitallive)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="defensive-eye" />
   </component>
   <component name="PyDocumentationSettings">
     <option name="format" value="PLAIN" />
