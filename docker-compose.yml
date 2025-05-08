@@ -11,8 +11,6 @@ services:
       - ./cert/:/home/digitallive/cert
     expose:
       - 8000
-    ports:
-      - "8000:8000"
     depends_on:
       - redis
       - memcached
@@ -31,8 +29,6 @@ services:
       - ./cert/:/home/digitallive/cert
     expose:
       - 8001
-    ports:
-      - "8001:8001"
     depends_on:
       - redis
       - memcached
@@ -57,7 +53,7 @@ services:
     container_name: nginx_rtmp
     ports:
       - "1935:1935"   # RTMP
-      - "8080:80"     # HLS playback
+#      - "8080:80"     # HLS playback
       - "80:80"
       - "443:443"
     volumes:
