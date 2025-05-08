@@ -20,13 +20,16 @@ class DisplayConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def receive(self, text_data):
-        data = json.loads(text_data)
-        action = data.get("action")
+        try:
+            data = json.loads(text_data)
+            action = data.get("action")
 
-        if action == "get_display_data":
-            await self.send_display_data()
-        else:
-            await self.send(text_data=json.dumps({"error": "Unknown action"}))
+            if action == "get_display_data":
+                await self.send_display_data()
+            else:
+                await self.send(text_data=json.dumps({"error": "Unknown action"}))
+        except Exception as e:
+            await self.send(text_data=json.dumps({"error": "Server error : {}".format(e)}))
 
     async def disconnect(self, close_code, **kwargs):
         await self.channel_layer.group_discard(
