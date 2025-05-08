@@ -9,14 +9,16 @@ services:
       - ./backend:/home/digitallive
       - ./stream:/opt/data/hls
       - ./cert/:/home/digitallive/cert
-    expose:
-      - 8000
     depends_on:
       - redis
       - memcached
       - postgres
     env_file:
       - ./docker.env
+    expose:
+      - 8000
+    ports:
+      - "8000:8000"
   daphne:
     build:
       context: ./backend
@@ -27,8 +29,6 @@ services:
       - ./backend:/home/digitallive
       - ./stream:/opt/data/hls
       - ./cert/:/home/digitallive/cert
-    expose:
-      - 8001
     depends_on:
       - redis
       - memcached
@@ -36,6 +36,10 @@ services:
       - gunicorn
     env_file:
       - ./docker.env
+    expose:
+      - 8001
+    ports:
+      - "8001:8001"
   celery:
     build:
       context: ./backend
