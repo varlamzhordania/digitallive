@@ -4,6 +4,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.core.validators import FileExtensionValidator
+from django_ckeditor_5.fields import CKEditor5Field
 from rest_framework.authtoken.models import Token
 from autoslug.fields import AutoSlugField
 
@@ -238,9 +239,10 @@ class TickerItem(BaseModel):
         on_delete=models.CASCADE,
         verbose_name=_('Ticker')
     )
-    content = models.TextField(
+    content = CKEditor5Field(
         verbose_name=_('Content'),
-        help_text=_('Individual text message for the ticker.')
+        help_text=_('Individual text message for the ticker.'),
+        config_name="comment",
     )
     order = models.PositiveIntegerField(
         default=0,

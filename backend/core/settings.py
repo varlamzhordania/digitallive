@@ -33,7 +33,7 @@ LOCAL_APPS = [
 
 THIRD_PARTY_APPS = [
     # 'ckeditor', # version 4
-    # 'django_ckeditor_5',
+    'django_ckeditor_5',
     # 'mptt',
     'nested_admin',
     'rest_framework',
