@@ -9,6 +9,6 @@ class TickerItemForm(forms.ModelForm):
         fields = ['ticker', 'content', 'order','is_active']
         widgets = {
             'content': CKEditor5Widget(
-                attrs={'class': 'django_ckeditor_5'}, config_name="admin"
+                attrs={'class': 'django_ckeditor_5'}, config_name="default"
             )
         }

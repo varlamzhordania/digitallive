@@ -409,7 +409,6 @@ BASE_CKEDITOR_5_CONFIGS = {
         },
 
         "extraPlugins": [
-            "A11yHelp",
             "Essentials", "CodeBlock", "Autoformat", "Bold", "Italic", "Underline", "Strikethrough", "Code",
             "Subscript", "Superscript", "BlockQuote", "Heading", "Image", "ImageCaption", "ImageStyle", "ImageToolbar",
             "ImageResize", "Link", "List", "Paragraph", "Alignment", "Font", "PasteFromOffice", "SimpleUploadAdapter",
@@ -417,7 +416,7 @@ BASE_CKEDITOR_5_CONFIGS = {
             "TableCellProperties",
             "Indent", "IndentBlock", "Highlight", "TodoList", "ListProperties", "SourceEditing", "GeneralHtmlSupport",
             "ImageInsert", "WordCount", "Mention", "Style", "HorizontalLine", "LinkImage", "SpecialCharacters",
-            "SpecialCharactersEssentials", "HtmlEmbed", "FullPage", "Emoji"
+            "SpecialCharactersEssentials", "HtmlEmbed", "FullPage",
         ]
     }
 }

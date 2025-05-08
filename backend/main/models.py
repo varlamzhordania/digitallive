@@ -242,7 +242,7 @@ class TickerItem(BaseModel):
     content = CKEditor5Field(
         verbose_name=_('Content'),
         help_text=_('Individual text message for the ticker.'),
-        config_name="admin",
+        config_name="default",
     )
     order = models.PositiveIntegerField(
         default=0,
