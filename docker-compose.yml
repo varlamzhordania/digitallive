@@ -24,7 +24,8 @@ services:
       context: ./backend
     container_name: daphne
     command:
-      bash -c "daphne -b 0.0.0.0 -p 8001 core.asgi:application"
+#      bash -c "daphne -b 0.0.0.0 -p 8001 core.asgi:application"
+      bash -c "daphne -u /var/run/django.sock -b 0.0.0.0 -p 8001 core.asgi:application"
     volumes:
       - ./backend:/home/digitallive
       - ./stream:/opt/data/hls
