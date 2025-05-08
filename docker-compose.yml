@@ -53,7 +53,7 @@ services:
     env_file:
       - ./docker.env
   nginx:
-    image: alfg/nginx-rtmp
+    image: nginx
     container_name: nginx_rtmp
     ports:
       - "1935:1935"   # RTMP
@@ -61,7 +61,8 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf.template
+#      - ./nginx/nginx.conf:/etc/nginx/nginx.conf.template
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/access.log:/var/log/nginx/access.log
       - ./nginx/error.log:/var/log/nginx/error.log
       - ./cert/:/home/digitallive/cert
