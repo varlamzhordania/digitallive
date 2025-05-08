@@ -1,9 +1,12 @@
 import json
+import logging
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 
 from main.models import Display
+
+logger = logging.getLogger(__name__)
 
 
 class DisplayConsumer(AsyncWebsocketConsumer):
@@ -29,6 +32,7 @@ class DisplayConsumer(AsyncWebsocketConsumer):
             else:
                 await self.send(text_data=json.dumps({"error": "Unknown action"}))
         except Exception as e:
+            logger.error(e)
             await self.send(text_data=json.dumps({"error": "Server error : {}".format(e)}))
 
     async def disconnect(self, close_code, **kwargs):
