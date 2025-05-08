@@ -24,7 +24,7 @@ services:
       context: ./backend
     container_name: daphne
     command:
-      bash -c "python manage.py makemigrations --noinput && python manage.py migrate --noinput && daphne -b 0.0.0.0 -p 8001 core.asgi:application"
+      bash -c "daphne -b 0.0.0.0 -p 8001 core.asgi:application"
     volumes:
       - ./backend:/home/digitallive
       - ./stream:/opt/data/hls
@@ -37,6 +37,7 @@ services:
       - redis
       - memcached
       - postgres
+      - gunicorn
     env_file:
       - ./docker.env
   celery:
