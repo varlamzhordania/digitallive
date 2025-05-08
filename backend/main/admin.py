@@ -2,10 +2,11 @@ from django.contrib import admin
 from nested_admin import NestedModelAdmin, NestedStackedInline
 
 from .models import Place, Display, DisplayLog, DisplayToken, Ticker, TickerItem
-
+from .forms import TickerItemForm
 
 class TicketItemInline(NestedStackedInline):
     model = TickerItem
+    form = TickerItemForm
     extra = 0
 
 
